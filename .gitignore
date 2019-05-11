@@ -1,0 +1,12 @@
+build/
+vendor/
+coverage.*
+*.coverprofile
+*.json
+.DS_Store
+*.swp
+debug
+.idea/
+*.iml
+env.txt
+.env
