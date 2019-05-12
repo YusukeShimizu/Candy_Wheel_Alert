@@ -2,6 +2,7 @@ package check
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/Candy_Wheel_Alert/notify"
 	"github.com/Candy_Wheel_Alert/robot"
@@ -18,10 +19,14 @@ func NewCheck(notifyer notify.Notifyer) *Check {
 }
 
 func (c *Check) Checktran(richLists []robot.RichList) {
-	fmt.Println("--------------------------------------")
-	for _, richList := range richLists {
-		fmt.Println("Address:", richList.Address)
-		fmt.Println(richList.Wallet)
-	}
-	fmt.Println("--------------------------------------")
+	ticker := time.NewTicker(3 * time.Second)
+	for {
+        select {
+		case <-ticker.C:
+			for _, richList := range richLists {
+				fmt.Println("Address:", richList.Address)
+				fmt.Println(richList.Wallet)
+			}
+        }
+    }
 }
