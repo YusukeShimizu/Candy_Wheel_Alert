@@ -70,6 +70,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/PuerkitoBio/goquery",
     "github.com/headzoo/surf/browser",
     "github.com/kelseyhightower/envconfig",
     "github.com/line/line-bot-sdk-go/linebot",
