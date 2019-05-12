@@ -7,6 +7,7 @@ import (
 	"github.com/Candy_Wheel_Alert/notify"
 	"github.com/Candy_Wheel_Alert/robot"
 	"github.com/Candy_Wheel_Alert/check"
+	"github.com/Candy_Wheel_Alert/request"
 )
 
 func main() {
@@ -30,7 +31,8 @@ func main() {
 		shutdown <- err
 	}
 	
-	check := check.NewCheck(*n)
+	request := request.NewRequest()
+	check := check.NewCheck(*n,*request)
 
 	go check.Checktran(richLists)
 

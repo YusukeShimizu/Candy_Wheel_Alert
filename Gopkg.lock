@@ -49,14 +49,41 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:d7b978a787736537d0ad2f84c0e8b75b05c2febef0537198e28edf1cf2768afd"
+  digest = "1:df0b90aab660f9cf40a37135ae257dbdb35bbda30e397eccf1ab0bbc1f1e03ba"
   name = "golang.org/x/net"
   packages = [
     "html",
     "html/atom",
+    "idna",
+    "publicsuffix",
   ]
   pruneopts = "UT"
   revision = "a4d6f7feada510cc50e69a37b484cb0fdc6b7876"
+
+[[projects]]
+  digest = "1:8d8faad6b12a3a4c819a3f9618cb6ee1fa1cfc33253abeeea8b55336721e3405"
+  name = "golang.org/x/text"
+  packages = [
+    "collate",
+    "collate/build",
+    "internal/colltab",
+    "internal/gen",
+    "internal/language",
+    "internal/language/compact",
+    "internal/tag",
+    "internal/triegen",
+    "internal/ucd",
+    "language",
+    "secure/bidirule",
+    "transform",
+    "unicode/bidi",
+    "unicode/cldr",
+    "unicode/norm",
+    "unicode/rangetable",
+  ]
+  pruneopts = "UT"
+  revision = "342b2e1fbaa52c93f31447ad2c6abc048c63e475"
+  version = "v0.3.2"
 
 [[projects]]
   digest = "1:18ea5f27fab5210969a334e233c7d1b0fac65bc3cd57cd96e273063c39f38fdf"
@@ -74,6 +101,7 @@
     "github.com/headzoo/surf/browser",
     "github.com/kelseyhightower/envconfig",
     "github.com/line/line-bot-sdk-go/linebot",
+    "golang.org/x/net/publicsuffix",
     "gopkg.in/headzoo/surf.v1",
   ]
   solver-name = "gps-cdcl"
