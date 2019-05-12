@@ -24,7 +24,7 @@ func NewCheck(notifyer notify.Notifyer,request request.Request) *Check {
 
 func (c *Check) Checktran(richLists []robot.RichList) {
 
-	resp,err := c.request.GetM()
+	resp,err := c.request.GetMethod()
 	if err != nil {
 		log.Fatal(err)
 	}
