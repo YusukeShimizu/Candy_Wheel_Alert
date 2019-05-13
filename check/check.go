@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 	"encoding/json"
+	"strconv"
 
 	"github.com/Candy_Wheel_Alert/notify"
 	"github.com/Candy_Wheel_Alert/robot"
@@ -72,6 +73,12 @@ type SingleAddress struct {
 		} `json:"txs"`
 }
 
+type AddressAsset struct {
+	NTx           int
+	TotalSent     int64
+	FinalBalance  int64
+}
+
 func NewCheck(notifyer notify.Notifyer,request request.Request) *Check {
 	c := Check{}
 	c.notifier = notifyer
@@ -81,27 +88,53 @@ func NewCheck(notifyer notify.Notifyer,request request.Request) *Check {
 
 func (c *Check) Checktran(richLists []robot.RichList) {
 
-	resp,err := c.request.GetMethod()
-	if err != nil {
-		log.Fatal(err)
-	}
-	var address SingleAddress
-	if err := json.Unmarshal(resp, &address); err != nil {
-		fmt.Println("JSON Unmarshal error:", err)
-		return
-	}
-	fmt.Println("-----------------------------------")
-	fmt.Println(address.Address)
-	fmt.Println(address.NTx)
-	fmt.Println(address.FinalBalance)
-
-	ticker := time.NewTicker(3 * time.Second)
+	addressAssets := make(map[string]AddressAsset)
+	ticker := time.NewTicker(10 * time.Second)
 	for {
         select {
 		case <-ticker.C:
 			for _, richList := range richLists {
-				fmt.Println("Address:", richList.Address)
-				fmt.Println(richList.Wallet)
+				url := "https://blockchain.info/rawaddr/" + richList.Address
+
+				resp,err := c.request.GetMethod(url)
+				if err != nil {
+					log.Fatal(err)
+				}
+				var address SingleAddress
+				if err := json.Unmarshal(resp, &address); err != nil {
+					fmt.Println("JSON Unmarshal error:", err)
+					return
+				}
+
+				eachasset := AddressAsset {
+					NTx: address.NTx,
+					TotalSent: address.TotalSent,
+					FinalBalance: address.FinalBalance,
+				}
+				
+				// mapにデータがない場合、Line通知しないようにexistsを確認
+				_, exists := addressAssets[address.Address]
+				if(exists){
+					if(addressAssets[address.Address] != eachasset){
+
+						notification := "API取得結果に差分が発生しました。\n";
+						notification = notification + "Address:" + address.Address + "\n"
+						notification = notification + "Last Info\n";
+						notification = notification + "n_tx:" + strconv.Itoa(addressAssets[address.Address].NTx) + "\n"
+						notification = notification + "total_sent:" + strconv.FormatInt(addressAssets[address.Address].TotalSent,10) + "\n"
+						notification = notification + "final_balance:" + strconv.FormatInt(addressAssets[address.Address].FinalBalance,10) + "\n" + "\n"
+						notification = notification + "Latest Info\n";
+						notification = notification + "n_tx:" + strconv.Itoa(eachasset.NTx) + "\n"
+						notification = notification + "total_sent:" + strconv.FormatInt(eachasset.TotalSent,10) + "\n"
+						notification = notification + "final_balance:" + strconv.FormatInt(eachasset.FinalBalance,10) + "\n" + "\n"
+						notification = notification + "https://www.blockchain.com/ja/btc/address/"  + address.Address;
+
+						c.notifier.Notify(notification)
+					}
+				}
+				//Mapにアドレスにひもづく情報を格納
+				addressAssets[address.Address] = eachasset
+
 			}
         }
     }
