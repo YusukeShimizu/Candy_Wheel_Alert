@@ -1,6 +1,7 @@
 package request
 
 import (
+	"fmt"
 	"bytes"
 	"encoding/json"
 	"io"
@@ -10,6 +11,7 @@ import (
 	"net/url"
 	"strings"
 	"time"
+	"io/ioutil"
 
 	"golang.org/x/net/publicsuffix"
 )
@@ -24,7 +26,7 @@ func NewRequest() *Request {
 	return &r
 }
 
-func (r *Request) GetMethod() (*http.Response, error) {
+func (r *Request) GetMethod() ([]byte, error) {
 	client, err := newClient()
 	if err != nil {
 		log.Fatalln("Fail to make http.Client. Most likely failed on making cookie jar", err)
@@ -41,7 +43,13 @@ func (r *Request) GetMethod() (*http.Response, error) {
 		log.Fatal("Fail on HTTP request", err)
 		return nil,err
 	}
-	return resp,nil
+
+	body, err := ioutil.ReadAll(resp.Body)
+	fmt.Println(resp.Body)
+	fmt.Println(body)
+	fmt.Println("status:", resp.StatusCode)
+
+	return buf.Bytes(),nil
 }
 
 func newClient() (*http.Client, error) {
