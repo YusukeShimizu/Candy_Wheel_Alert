@@ -3,11 +3,11 @@ package main
 import (
 	"log"
 
+	"github.com/Candy_Wheel_Alert/check"
 	"github.com/Candy_Wheel_Alert/env"
 	"github.com/Candy_Wheel_Alert/notify"
-	"github.com/Candy_Wheel_Alert/robot"
-	"github.com/Candy_Wheel_Alert/check"
 	"github.com/Candy_Wheel_Alert/request"
+	"github.com/Candy_Wheel_Alert/robot"
 )
 
 func main() {
@@ -30,9 +30,9 @@ func main() {
 	if err != nil {
 		shutdown <- err
 	}
-	
+
 	request := request.NewRequest()
-	check := check.NewCheck(*n,*request)
+	check := check.NewCheck(*n, *request)
 
 	go check.Checktran(richLists)
 
