@@ -2,8 +2,6 @@ package check
 
 import (
 	"encoding/json"
-	"fmt"
-	"log"
 	"time"
 	"strconv"
 
@@ -88,7 +86,7 @@ func NewCheck(notifyer notify.Notifyer, request request.Request) *Check {
 	return &c
 }
 
-func (c *Check) Checktran(richLists []robot.RichList) {
+func (c *Check) Checktran(richLists []robot.RichList) error {
 
 	addressAssets := make(map[string]AddressAsset)
 	ticker := time.NewTicker(120 * time.Second)
@@ -100,12 +98,11 @@ func (c *Check) Checktran(richLists []robot.RichList) {
 
 				resp, err := c.request.GetMethod(url)
 				if err != nil {
-					log.Fatal(err)
+					return err
 				}
 				var address SingleAddress
 				if err := json.Unmarshal(resp, &address); err != nil {
-					fmt.Println("JSON Unmarshal error:", err)
-					return
+					return err
 				}
 
 				eachasset := AddressAsset{

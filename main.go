@@ -34,7 +34,10 @@ func main() {
 	request := request.NewRequest()
 	check := check.NewCheck(*n, *request)
 
-	go check.Checktran(richLists)
+	err = check.Checktran(richLists)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	<-shutdown
 	log.Fatal(shutdown)

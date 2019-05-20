@@ -26,12 +26,12 @@ func NewRequest() *Request {
 func (r *Request) GetMethod(url string) ([]byte, error) {
 	client, err := newClient()
 	if err != nil {
-		log.Fatalln("Fail to make http.Client. Most likely failed on making cookie jar", err)
+		return nil,err
 	}
 
 	req, err := newRequest("GET", url, nil)
 	if err != nil {
-		log.Fatalln("Fail to make http.Request", err)
+		return nil,err
 	}
 
 	buf := new(bytes.Buffer)
