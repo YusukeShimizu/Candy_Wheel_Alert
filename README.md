@@ -14,3 +14,11 @@ ID       string `required:"true" envconfig:"ID"`
 ```sh
 go run main.go
 ```
+
+#### Run on Docker
+
+```sh
+docker build -t candy ./ --build-arg secret=YOUR_SECRET --build-arg token=YOUR_TOKEN --build-arg id=YOUR_ID
+
+docker run -it candy
+```

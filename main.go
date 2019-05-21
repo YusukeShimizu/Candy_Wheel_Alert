@@ -1,11 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
+	"github.com/Candy_Wheel_Alert/check"
 	"github.com/Candy_Wheel_Alert/env"
 	"github.com/Candy_Wheel_Alert/notify"
+	"github.com/Candy_Wheel_Alert/request"
 	"github.com/Candy_Wheel_Alert/robot"
 )
 
@@ -29,10 +30,15 @@ func main() {
 	if err != nil {
 		shutdown <- err
 	}
-	for _, richList := range richLists {
-		fmt.Println("Address:", richList.Address)
-		fmt.Println(richList.Wallet)
+
+	request := request.NewRequest()
+	check := check.NewCheck(*n, *request)
+
+	err = check.Checktran(richLists)
+	if err != nil {
+		log.Fatal(err)
 	}
+
 	<-shutdown
 	log.Fatal(shutdown)
 }
