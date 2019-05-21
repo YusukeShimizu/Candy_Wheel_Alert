@@ -37,7 +37,6 @@ func (r *Request) GetMethod(url string) ([]byte, error) {
 	buf := new(bytes.Buffer)
 	_, err = do(client, req, buf)
 	if err != nil {
-		log.Fatal("Fail on HTTP request", err)
 		return nil,err
 	}
 	return buf.Bytes(),nil
