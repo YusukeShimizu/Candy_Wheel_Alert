@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
-	"log"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
@@ -26,20 +25,20 @@ func NewRequest() *Request {
 func (r *Request) GetMethod(url string) ([]byte, error) {
 	client, err := newClient()
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	req, err := newRequest("GET", url, nil)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	buf := new(bytes.Buffer)
 	_, err = do(client, req, buf)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
-	return buf.Bytes(),nil
+	return buf.Bytes(), nil
 }
 
 func newClient() (*http.Client, error) {
