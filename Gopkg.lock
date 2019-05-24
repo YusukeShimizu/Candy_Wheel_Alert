@@ -48,6 +48,14 @@
   version = "v6.3.0"
 
 [[projects]]
+  digest = "1:ed615c5430ecabbb0fb7629a182da65ecee6523900ac1ac932520860878ffcad"
+  name = "github.com/robfig/cron"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "b41be1df696709bb6395fe435af20370037c0b4c"
+  version = "v1.1"
+
+[[projects]]
   branch = "master"
   digest = "1:df0b90aab660f9cf40a37135ae257dbdb35bbda30e397eccf1ab0bbc1f1e03ba"
   name = "golang.org/x/net"
@@ -58,7 +66,7 @@
     "publicsuffix",
   ]
   pruneopts = "UT"
-  revision = "a4d6f7feada510cc50e69a37b484cb0fdc6b7876"
+  revision = "018c4d40a106a7ae83689758294fcd8d23850745"
 
 [[projects]]
   digest = "1:8d8faad6b12a3a4c819a3f9618cb6ee1fa1cfc33253abeeea8b55336721e3405"
@@ -101,6 +109,7 @@
     "github.com/headzoo/surf/browser",
     "github.com/kelseyhightower/envconfig",
     "github.com/line/line-bot-sdk-go/linebot",
+    "github.com/robfig/cron",
     "golang.org/x/net/publicsuffix",
     "gopkg.in/headzoo/surf.v1",
   ]

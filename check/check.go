@@ -2,8 +2,8 @@ package check
 
 import (
 	"encoding/json"
-	"time"
 	"strconv"
+	"time"
 
 	"github.com/Candy_Wheel_Alert/notify"
 	"github.com/Candy_Wheel_Alert/request"
@@ -89,68 +89,64 @@ func NewCheck(notifyer notify.Notifyer, request request.Request) *Check {
 func (c *Check) Checktran(richLists []robot.RichList) error {
 
 	addressAssets := make(map[string]AddressAsset)
-	ticker := time.NewTicker(120 * time.Second)
-	for {
-		select {
-		case <-ticker.C:
-			for _, richList := range richLists {
-				url := "https://blockchain.info/rawaddr/" + richList.Address
 
-				resp, err := c.request.GetMethod(url)
-				if err != nil {
-					return err
-				}
-				var address SingleAddress
-				if err := json.Unmarshal(resp, &address); err != nil {
-					return err
-				}
+	for _, richList := range richLists {
+		url := "https://blockchain.info/rawaddr/" + richList.Address
 
-				eachasset := AddressAsset{
-					NTx:          address.NTx,
-					TotalSent:    address.TotalSent,
-					FinalBalance: address.FinalBalance,
-					Txs:          address.Txs,
-				}
-				for _, tx := range address.Txs {
-					// do something
-					t := time.Unix(tx.Time, 0)
-					diff := time.Now().Sub(t)
-					if diff.Hours() <= 1 {
-						input_judge := false
-						for _, input := range tx.Inputs {
-							
-							// inputに該当のアドレスがあればTrue
-							if input.PrevOut.Addr == address.Address {
-								input_judge = true
-							}
-						}
-						if input_judge {
-							outvalue := 0
-							//var outaddrs []string
-							outaddrs := make(map[string]int)
-							for _, out := range tx.Out {
-								if out.Addr != address.Address {
-									outvalue += out.Value
-									outaddrs[out.Addr] += out.Value
-								}
-							}
+		resp, err := c.request.GetMethod(url)
+		if err != nil {
+			return err
+		}
+		var address SingleAddress
+		if err := json.Unmarshal(resp, &address); err != nil {
+			return err
+		}
 
-							var outvalue_btc float64 = float64(outvalue)/100000000
-							notification := strconv.FormatFloat(outvalue_btc, 'f', 4, 64) + " BTCの送金\n";
-							notification = notification + address.Address + "\n";
-							notification = notification + "↓\n";
-							for addr, _ := range outaddrs{
-								notification = notification + addr + "\n"
-							}
-							notification = notification + "\n";
-							notification = notification + "https://www.blockchain.com/ja/btc/tx/"  + tx.Hash  + "\n";
-							c.notifier.Notify(notification)
-						}
+		eachasset := AddressAsset{
+			NTx:          address.NTx,
+			TotalSent:    address.TotalSent,
+			FinalBalance: address.FinalBalance,
+			Txs:          address.Txs,
+		}
+		for _, tx := range address.Txs {
+			// do something
+			t := time.Unix(tx.Time, 0)
+			diff := time.Now().Sub(t)
+			if diff.Hours() <= 1 {
+				input_judge := false
+				for _, input := range tx.Inputs {
+
+					// inputに該当のアドレスがあればTrue
+					if input.PrevOut.Addr == address.Address {
+						input_judge = true
 					}
 				}
-				//Mapにアドレスにひもづく情報を格納
-				addressAssets[address.Address] = eachasset
+				if input_judge {
+					outvalue := 0
+					//var outaddrs []string
+					outaddrs := make(map[string]int)
+					for _, out := range tx.Out {
+						if out.Addr != address.Address {
+							outvalue += out.Value
+							outaddrs[out.Addr] += out.Value
+						}
+					}
+
+					var outvalue_btc float64 = float64(outvalue) / 100000000
+					notification := strconv.FormatFloat(outvalue_btc, 'f', 4, 64) + " BTCの送金\n"
+					notification = notification + address.Address + "\n"
+					notification = notification + "↓\n"
+					for addr, _ := range outaddrs {
+						notification = notification + addr + "\n"
+					}
+					notification = notification + "\n"
+					notification = notification + "https://www.blockchain.com/ja/btc/tx/" + tx.Hash + "\n"
+					c.notifier.Notify(notification)
+				}
 			}
 		}
+		//Mapにアドレスにひもづく情報を格納
+		addressAssets[address.Address] = eachasset
 	}
+	return nil
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/Candy_Wheel_Alert/notify"
 	"github.com/Candy_Wheel_Alert/request"
 	"github.com/Candy_Wheel_Alert/robot"
+	"github.com/robfig/cron"
 )
 
 func main() {
@@ -25,20 +26,25 @@ func main() {
 	}
 
 	robot := robot.NewRobot(*n)
-
-	richLists, err := robot.ScrapeBitcoinRichList()
-	if err != nil {
-		shutdown <- err
-	}
-
 	request := request.NewRequest()
-	check := check.NewCheck(*n, *request)
 
-	err = check.Checktran(richLists)
-	if err != nil {
-		log.Fatal(err)
-	}
+	cron := cron.New()
+	cron.AddFunc(config.Pace, func() {
+
+		richLists, err := robot.ScrapeBitcoinRichList()
+		if err != nil {
+			shutdown <- err
+		}
+
+		check := check.NewCheck(*n, *request)
+
+		err = check.Checktran(richLists)
+		if err != nil {
+			log.Fatal(err)
+		}
+	})
 
 	<-shutdown
 	log.Fatal(shutdown)
+
 }
