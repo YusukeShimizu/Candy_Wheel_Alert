@@ -8,11 +8,14 @@ import (
 	"github.com/Candy_Wheel_Alert/notify"
 	"github.com/Candy_Wheel_Alert/request"
 	"github.com/Candy_Wheel_Alert/robot"
+	"github.com/Candy_Wheel_Alert/util"
 )
 
 type Check struct {
 	notifier notify.Notifyer
 	request  request.Request
+	util     util.Util
+	txs      []string
 }
 
 type Transaction struct {
@@ -79,10 +82,11 @@ type AddressAsset struct {
 	Txs          []Transaction
 }
 
-func NewCheck(notifyer notify.Notifyer, request request.Request) *Check {
+func NewCheck(notifyer notify.Notifyer, request request.Request, util util.Util) *Check {
 	c := Check{}
 	c.notifier = notifyer
 	c.request = request
+	c.util = util
 	return &c
 }
 
@@ -108,11 +112,12 @@ func (c *Check) Checktran(richLists []robot.RichList) error {
 			FinalBalance: address.FinalBalance,
 			Txs:          address.Txs,
 		}
+
 		for _, tx := range address.Txs {
 			// do something
 			t := time.Unix(tx.Time, 0)
 			diff := time.Now().Sub(t)
-			if diff.Hours() <= 1 {
+			if diff.Hours() <= 100 {
 				input_judge := false
 				for _, input := range tx.Inputs {
 
@@ -134,14 +139,17 @@ func (c *Check) Checktran(richLists []robot.RichList) error {
 
 					var outvalue_btc float64 = float64(outvalue) / 100000000
 					notification := strconv.FormatFloat(outvalue_btc, 'f', 4, 64) + " BTCの送金\n"
-					notification = notification + address.Address + "\n"
+					notification = notification + address.Address + "(" + richList.Wallet + ")" + "\n"
 					notification = notification + "↓\n"
 					for addr, _ := range outaddrs {
 						notification = notification + addr + "\n"
 					}
 					notification = notification + "\n"
 					notification = notification + "https://www.blockchain.com/ja/btc/tx/" + tx.Hash + "\n"
-					c.notifier.Notify(notification)
+					if c.util.Contains(c.txs, tx.Hash) == false {
+						c.notifier.Notify(notification)
+					}
+					c.txs = append(c.txs, tx.Hash)
 				}
 			}
 		}
