@@ -50,12 +50,10 @@ func (r *Robot) WalletName(address string) (string, error) {
 		return "", err
 	}
 	walletname := "unknown";
-	r.bow.Find(`html > body > div > div > table > tbody > tr > td > .table.table-striped.table-condensed > tbody > tr > td > small`).Each(func(arg1 int, arg2 *goquery.Selection) {
-		arg2.Find("a").Each(func(arg3 int, arg4 *goquery.Selection) {
-			if arg3==0 {
-				walletname = arg4.Text()
-			}
-		})
+	r.bow.Find(`html > body > div > div > table > tbody > tr > td > .table.table-striped.table-condensed > tbody > tr > td > small > a`).Each(func(arg1 int, arg2 *goquery.Selection) {
+		if arg1==0 {
+			walletname = arg2.Text()
+		}
 	})
 	return walletname, nil
 }
