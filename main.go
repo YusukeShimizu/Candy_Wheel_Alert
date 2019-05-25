@@ -29,9 +29,9 @@ func main() {
 	robot := robot.NewRobot(*n)
 	request := request.NewRequest()
 	util := util.NewUtil()
-	check := check.NewCheck(*n, *request, *util)
+	check := check.NewCheck(*n, *request, *robot, *util)
 
-	n.Notify("Cron Start")
+	n.Notify("Candy_Wheel_Alert Start")
 	cron := cron.New()
 	cron.AddFunc(config.Pace, func() {
 		richLists, err := robot.ScrapeBitcoinRichList()
