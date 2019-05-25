@@ -117,7 +117,7 @@ func (c *Check) Checktran(richLists []robot.RichList) error {
 			// do something
 			t := time.Unix(tx.Time, 0)
 			diff := time.Now().Sub(t)
-			if diff.Hours() <= 100 {
+			if diff.Hours() <= 1 {
 				input_judge := false
 				for _, input := range tx.Inputs {
 
@@ -146,7 +146,7 @@ func (c *Check) Checktran(richLists []robot.RichList) error {
 					}
 					notification = notification + "\n"
 					notification = notification + "https://www.blockchain.com/ja/btc/tx/" + tx.Hash + "\n"
-					if c.util.Contains(c.txs, tx.Hash) == false {
+					if !c.util.Contains(c.txs, tx.Hash) {
 						c.notifier.Notify(notification)
 					}
 					c.txs = append(c.txs, tx.Hash)

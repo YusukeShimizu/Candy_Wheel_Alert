@@ -31,6 +31,7 @@ func main() {
 	util := util.NewUtil()
 	check := check.NewCheck(*n, *request, *util)
 
+	n.Notify("Cron Start")
 	cron := cron.New()
 	cron.AddFunc(config.Pace, func() {
 		richLists, err := robot.ScrapeBitcoinRichList()
