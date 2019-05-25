@@ -9,5 +9,8 @@ ARG token
 ENV TOKEN ${token}
 ARG id
 ENV ID ${id}
+ENV PACE */60 * * * * *
 
 ADD . .
+
+CMD ["/usr/local/go/bin/go", "run", "main.go"]
