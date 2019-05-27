@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"strings"
 	"time"
+	"log"
 
 	"golang.org/x/net/publicsuffix"
 )
@@ -23,6 +24,7 @@ func NewRequest() *Request {
 }
 
 func (r *Request) GetMethod(url string) ([]byte, error) {
+	log.Printf("GetMethod : " + url)
 	client, err := newClient()
 	if err != nil {
 		return nil, err
