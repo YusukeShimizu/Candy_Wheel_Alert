@@ -31,16 +31,17 @@ func main() {
 	util := util.NewUtil()
 	check := check.NewCheck(*n, *request, *robot, *util)
 
-	n.Notify("Candy_Wheel_Alert Start")
 	cron := cron.New()
 	cron.AddFunc(config.Pace, func() {
 		richLists, err := robot.ScrapeBitcoinRichList()
 		if err != nil {
+			n.Notify(err.Error())
 			shutdown <- err
 		}
 
 		err = check.Checktran(richLists)
 		if err != nil {
+			n.Notify(err.Error())
 			log.Fatal(err)
 		}
 	})
