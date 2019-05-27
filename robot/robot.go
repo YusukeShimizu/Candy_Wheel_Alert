@@ -43,3 +43,17 @@ func (r *Robot) ScrapeBitcoinRichList() ([]RichList, error) {
 	})
 	return richLists, nil
 }
+
+func (r *Robot) WalletName(address string) (string, error) {
+	err := r.bow.Open("https://bitinfocharts.com/bitcoin/address/"+address)
+	if err != nil {
+		return "", err
+	}
+	walletname := "unknown";
+	r.bow.Find(`html > body > div > div > table > tbody > tr > td > .table.table-striped.table-condensed > tbody > tr > td > small > a`).Each(func(arg1 int, arg2 *goquery.Selection) {
+		if arg1==0 {
+			walletname = arg2.Text()
+		}
+	})
+	return walletname, nil
+}

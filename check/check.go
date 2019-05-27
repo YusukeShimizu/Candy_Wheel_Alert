@@ -15,6 +15,7 @@ type Check struct {
 	notifier notify.Notifyer
 	request  request.Request
 	util     util.Util
+	robot    robot.Robot
 	txs      []string
 }
 
@@ -82,18 +83,18 @@ type AddressAsset struct {
 	Txs          []Transaction
 }
 
-func NewCheck(notifyer notify.Notifyer, request request.Request, util util.Util) *Check {
+func NewCheck(notifyer notify.Notifyer, request request.Request, robot robot.Robot,util util.Util) *Check {
 	c := Check{}
 	c.notifier = notifyer
 	c.request = request
 	c.util = util
+	c.robot = robot
 	return &c
 }
 
 func (c *Check) Checktran(richLists []robot.RichList) error {
 
 	addressAssets := make(map[string]AddressAsset)
-
 	for _, richList := range richLists {
 		url := "https://blockchain.info/rawaddr/" + richList.Address
 
@@ -142,7 +143,11 @@ func (c *Check) Checktran(richLists []robot.RichList) error {
 					notification = notification + address.Address + "(" + richList.Wallet + ")" + "\n"
 					notification = notification + "↓\n"
 					for addr, _ := range outaddrs {
-						notification = notification + addr + "\n"
+						walletname, err := c.robot.WalletName(addr)
+						if err != nil {
+							return err
+						}
+						notification = notification + addr + "(" + walletname +  ")\n"
 					}
 					notification = notification + "\n"
 					notification = notification + "https://www.blockchain.com/ja/btc/tx/" + tx.Hash + "\n"
